@@ -1,24 +1,30 @@
 import '../../App.css';
 import {TodoForm} from "../TodoForm/TodoForm";
 import {useEffect, useState} from 'react'
+import {setTitleThunk, setTodoThunk} from "../../redux/reducers/todoReducer";
+import {useDispatch, useSelector} from "react-redux";
 
 export const TodoPage = () => {
+    const dispatch = useDispatch()
+    const titleRedux = useSelector(state => state.todo.title)
+    const todosRedux = useSelector(state => state.todo.todos)
+//можно удалить
     const [todos, setTodos] = useState([])
-    const [title, setTitle] = useState('')
+
 
     const changeHandler = (e) => {
-        setTitle(e.target.value)
+        dispatch(setTitleThunk(e.target.value))
     }
 
     const addHandler = (e) => {
         if (e.key === "Enter") {
             let newTodo = {
-                title: title,
+                title: titleRedux,
                 completed: false,
                 id: Date.now()
             }
-            setTodos(prev => [...prev, newTodo])
-            setTitle('')
+            dispatch(setTodoThunk(newTodo))
+            dispatch(setTitleThunk(''))
         }
     }
 
@@ -46,7 +52,7 @@ export const TodoPage = () => {
         <>
             <TodoForm addHandler={addHandler} changeHandler={changeHandler}/>
             <ul>
-                {todos.map(item => {
+                {todosRedux.map(item => {
                     return (
                         <li key={item.id} className={'todo'}>
                             <label>
